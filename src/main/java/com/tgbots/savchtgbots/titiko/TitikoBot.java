@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class TitikoBot extends TelegramLongPollingBot {
 
+    private static final String TIKTOK_PREFIX = "https://vm.tiktok.com/";
+
     private final String userName = "titiko_bot";
     private String secretToken;
 
@@ -18,13 +20,16 @@ public class TitikoBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String messageText = update.getMessage().getText();
+        if (!update.hasMessage() || !update.getMessage().hasText()) {
+            return;
+        }
+        String receivedMsg = update.getMessage().getText();
+        if (receivedMsg.startsWith(TIKTOK_PREFIX)) {
             long chatId = update.getMessage().getChatId();
 
             SendMessage message = new SendMessage();
             message.setChatId(chatId);
-            message.setText(messageText);
+            message.setText("It is a tiktok link!");
 
             try {
                 execute(message);
